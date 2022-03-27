@@ -10,7 +10,7 @@ Simple Memo is a web application that creates memo list by adding a title and it
 $ git clone https://github.com/kazumi3858/sinatra-practice.git
 ```
 
-3. Install gems(json, sinatra, sinatra-contrib, webrick).
+3. Install gems.
 
 ```
 $ bundle install

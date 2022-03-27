@@ -13,7 +13,7 @@ body a {
 }
 
 .memo-list {
-  margin-top: 30px;
+  margin-top: 50px;
 }
 
 .memo {
@@ -61,11 +61,6 @@ textarea {
 .button {
   display: block;
   text-align: right;
-}
-
-button {
-  width: 100px;
-  height: 40px;
 }
 
 footer {

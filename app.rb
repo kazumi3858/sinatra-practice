@@ -10,36 +10,39 @@ helpers do
   end
 end
 
-def create_file
-  data = { 'id' => @id, 'title' => @title, 'content' => @content }
-  File.open("./memos/#{@id}.json", 'w') do |file|
-    file.puts(data.to_json)
+def create_memo(memo)
+  File.open("./memos/#{memo[:id]}.json", 'w') do |file|
+    file.puts(memo.to_json)
   end
 end
 
-def data_from_file
-  @id = params[:id].to_i
-  data = JSON.parse(File.read("./memos/#{@id}.json"), symbolize_names: true)
-  @title = data[:title]
-  @content = data[:content]
+def read_memo
+  memo = {}
+  memo[:id] = params[:id].to_i
+  data = JSON.parse(File.read("./memos/#{memo[:id]}.json"), symbolize_names: true)
+  memo[:title] = h(data[:title])
+  memo[:content] = h(data[:content])
+  memo
 end
 
 get '/' do
+  @memos = Dir.glob('./memos/*.json').sort_by { |file| File.birthtime(file) }
   erb :index
 end
 
 post '/' do
-  @title = h(params[:title])
-  @content = h(params[:content])
-  @id = @title.object_id
-  create_file
-  redirect to("/memos/#{@id}")
+  memo = {}
+  memo[:title] = params[:title]
+  memo[:content] = params[:content]
+  memo[:id] = memo[:title].object_id
+  create_memo(memo)
+  redirect to("/memos/#{memo[:id]}")
   erb :index
 end
 
 get '/memos/:id' do
-  data_from_file
-  erb :memos
+  @memo = read_memo
+  erb :memo
 end
 
 get '/new' do
@@ -47,22 +50,23 @@ get '/new' do
 end
 
 delete '/memos/:id' do
-  @id = params[:id].to_i
-  File.delete("./memos/#{@id}.json")
+  id = params[:id].to_i
+  File.delete("./memos/#{id}.json")
   redirect to('/')
-  erb :memos
+  erb :memo
 end
 
 patch '/memos/:id' do
-  @title = h(params[:title])
-  @content = h(params[:content])
-  @id = params[:id].to_i
-  create_file
-  redirect to("/memos/#{@id}")
+  memo = {}
+  memo[:title] = params[:title]
+  memo[:content] = params[:content]
+  memo[:id] = params[:id].to_i
+  create_memo(memo)
+  redirect to("/memos/#{memo[:id]}")
   erb :edit
 end
 
 get '/memos/:id/edit' do
-  data_from_file
+  @memo = read_memo
   erb :edit
 end

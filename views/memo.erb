@@ -1,15 +1,15 @@
 <article>
-  <h2><%= @title %></h2>
+  <h2><%= @memo[:title] %></h2>
   <p>
-    <% @content.split("\r\n").each do |line| %>
+    <% @memo[:content].each_line(chomp: true) do |line| %>
     <%= line %><br>
     <% end %>
   </p>
 </article>
 <div class="form-button">
-  <button type="button" onclick="location.href='/memos/<%= params[:id] %>/edit'">Edit</button>
+  <a href="/memos/<%= params[:id] %>/edit">Edit</a>
   <form action="/memos/<%= params[:id] %>" method="post">
     <input name="_method" type="hidden" value="delete">
-    <input type="submit" value="Delete">
+    <input class="submit-button" type="submit" value="Delete">
   </form>
 </div>
