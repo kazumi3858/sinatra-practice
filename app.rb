@@ -16,17 +16,21 @@ def create_memo(memo)
   end
 end
 
-def read_memo
+def read_memo(id)
   memo = {}
-  memo[:id] = params[:id].to_i
+  memo[:id] = id.to_i
   data = JSON.parse(File.read("./memos/#{memo[:id]}.json"), symbolize_names: true)
-  memo[:title] = h(data[:title])
-  memo[:content] = h(data[:content])
+  memo[:title] = data[:title]
+  memo[:content] = data[:content]
   memo
 end
 
 get '/' do
-  @memos = Dir.glob('./memos/*.json').sort_by { |file| File.birthtime(file) }
+  files = Dir.glob('./memos/*.json').sort_by { |file| File.birthtime(file) }
+  @memos = files.map do |file|
+    id = file.match(/\d+/)[0]
+    read_memo(id)
+  end
   erb :index
 end
 
@@ -41,7 +45,7 @@ post '/' do
 end
 
 get '/memos/:id' do
-  @memo = read_memo
+  @memo = read_memo(params[:id])
   erb :memo
 end
 
@@ -67,6 +71,6 @@ patch '/memos/:id' do
 end
 
 get '/memos/:id/edit' do
-  @memo = read_memo
+  @memo = read_memo(params[:id])
   erb :edit
 end

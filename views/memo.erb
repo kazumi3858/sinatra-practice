@@ -1,7 +1,7 @@
 <article>
-  <h2><%= @memo[:title] %></h2>
+  <h2><%= h(@memo[:title]) %></h2>
   <p>
-    <% @memo[:content].each_line(chomp: true) do |line| %>
+    <% h(@memo[:content]).each_line(chomp: true) do |line| %>
     <%= line %><br>
     <% end %>
   </p>
