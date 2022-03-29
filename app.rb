@@ -3,6 +3,7 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
+require 'securerandom'
 
 helpers do
   def h(text)
@@ -10,25 +11,24 @@ helpers do
   end
 end
 
-def create_memo(memo)
+def save_memo(memo)
   File.open("./memos/#{memo[:id]}.json", 'w') do |file|
     file.puts(memo.to_json)
   end
 end
 
 def read_memo(id)
-  memo = {}
-  memo[:id] = id.to_i
-  data = JSON.parse(File.read("./memos/#{memo[:id]}.json"), symbolize_names: true)
-  memo[:title] = data[:title]
-  memo[:content] = data[:content]
-  memo
+  JSON.parse(File.read("./memos/#{id}.json"), symbolize_names: true)
+end
+
+def delete_memo(id)
+  File.delete("./memos/#{id}.json")
 end
 
 get '/' do
   files = Dir.glob('./memos/*.json').sort_by { |file| File.birthtime(file) }
-  @memos = files.map do |file|
-    id = file.match(/\d+/)[0]
+  @memos = files.reverse.map do |file|
+    id = File.basename(file, '.json')
     read_memo(id)
   end
   erb :index
@@ -38,8 +38,8 @@ post '/' do
   memo = {}
   memo[:title] = params[:title]
   memo[:content] = params[:content]
-  memo[:id] = memo[:title].object_id
-  create_memo(memo)
+  memo[:id] = SecureRandom.uuid
+  save_memo(memo)
   redirect to("/memos/#{memo[:id]}")
   erb :index
 end
@@ -54,8 +54,7 @@ get '/new' do
 end
 
 delete '/memos/:id' do
-  id = params[:id].to_i
-  File.delete("./memos/#{id}.json")
+  delete_memo(params[:id])
   redirect to('/')
   erb :memo
 end
@@ -64,8 +63,8 @@ patch '/memos/:id' do
   memo = {}
   memo[:title] = params[:title]
   memo[:content] = params[:content]
-  memo[:id] = params[:id].to_i
-  create_memo(memo)
+  memo[:id] = params[:id]
+  save_memo(memo)
   redirect to("/memos/#{memo[:id]}")
   erb :edit
 end
