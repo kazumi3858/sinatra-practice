@@ -41,7 +41,6 @@ post '/' do
   memo[:id] = SecureRandom.uuid
   save_memo(memo)
   redirect to("/memos/#{memo[:id]}")
-  erb :index
 end
 
 get '/memos/:id' do
@@ -56,7 +55,6 @@ end
 delete '/memos/:id' do
   delete_memo(params[:id])
   redirect to('/')
-  erb :memo
 end
 
 patch '/memos/:id' do
@@ -66,7 +64,6 @@ patch '/memos/:id' do
   memo[:id] = params[:id]
   save_memo(memo)
   redirect to("/memos/#{memo[:id]}")
-  erb :edit
 end
 
 get '/memos/:id/edit' do
