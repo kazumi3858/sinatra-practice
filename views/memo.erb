@@ -1,0 +1,15 @@
+<article>
+  <h2><%= h(@memo[:title]) %></h2>
+  <p>
+    <% @memo[:content].each_line(chomp: true) do |line| %>
+    <%= h(line) %><br>
+    <% end %>
+  </p>
+</article>
+<div class="form-button">
+  <a href="/memos/<%= params[:id] %>/edit">Edit</a>
+  <form action="/memos/<%= params[:id] %>" method="post">
+    <input name="_method" type="hidden" value="delete">
+    <input class="submit-button" type="submit" value="Delete">
+  </form>
+</div>

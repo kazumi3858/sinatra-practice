@@ -1,0 +1,13 @@
+<div class="memo-list-title">
+  <h2>My Memos</h2>
+</div>
+<div class="button">
+  <a href="/new">Create Memo</a>
+</div>
+<div class="memo-list">
+  <ul>
+    <% @memos.each do |memo| %>
+    <li><a href="/memos/<%= memo[:id] %>"><%= h(memo[:title]) %></a></li>
+    <% end %>
+  </ul>
+</div>
