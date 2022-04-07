@@ -15,23 +15,23 @@ class Memo
   end
 
   def save_memo(title, content)
-    db_connection.exec('INSERT INTO memos (title, content) VALUES ($1, $2) RETURNING id', [title.to_s, content.to_s])
+    db_connection.exec('INSERT INTO memos (title, content) VALUES ($1, $2) RETURNING id', [title, content])
   end
 
-  def read_memo(id: false)
-    if id
-      db_connection.exec('SELECT * FROM memos WHERE id = $1', [id.to_s])
-    else
-      db_connection.exec('SELECT * FROM memos ORDER BY id DESC')
-    end
+  def read_memo(id)
+    db_connection.exec('SELECT * FROM memos WHERE id = $1', [id])
+  end
+
+  def read_memos
+    db_connection.exec('SELECT * FROM memos ORDER BY id DESC')
   end
 
   def update_memo(title, content, id)
-    db_connection.exec('UPDATE memos SET title = $1, content = $2 WHERE id = $3', [title.to_s, content.to_s, id.to_s])
+    db_connection.exec('UPDATE memos SET title = $1, content = $2 WHERE id = $3', [title, content, id])
   end
 
   def delete_memo(id)
-    db_connection.exec('DELETE FROM memos WHERE id = $1', [id.to_s])
+    db_connection.exec('DELETE FROM memos WHERE id = $1', [id])
   end
 end
 
@@ -42,7 +42,7 @@ helpers do
 end
 
 get '/' do
-  @memos = Memo.new.read_memo
+  @memos = Memo.new.read_memos
   erb :index
 end
 
@@ -55,7 +55,7 @@ end
 
 get '/memos/:id' do
   id = params[:id]
-  @memo = Memo.new.read_memo(id: id)
+  @memo = Memo.new.read_memo(id)[0]
   erb :memo
 end
 
@@ -79,6 +79,6 @@ end
 
 get '/memos/:id/edit' do
   id = params[:id]
-  @memo = Memo.new.read_memo(id: id)
+  @memo = Memo.new.read_memo(id)[0]
   erb :edit
 end
