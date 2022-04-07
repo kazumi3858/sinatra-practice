@@ -2,11 +2,11 @@
   <input name="_method" type="hidden" value="patch">
   <div class="form-title">
     <label for="title">Title</label>
-    <input type="text" name="title" value="<%= h(@memo[:title]) %>" required maxlength="100">
+    <input type="text" name="title" value="<%= h(@memo["title"]) %>" required maxlength="100">
   </div>
   <div>
     <label for="content">Content</label>
-    <textarea type="text" name="content" required maxlength="1000"><%= h(@memo[:content]) %></textarea>
+    <textarea type="text" name="content" required maxlength="1000"><%= h(@memo["content"]) %></textarea>
   </div>
   <div class="form-button">
     <input type="submit" value="Update">
